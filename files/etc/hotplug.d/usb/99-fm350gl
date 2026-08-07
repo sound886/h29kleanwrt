@@ -1,0 +1,31 @@
+#!/bin/sh
+[ "$ACTION" = "add" ] || exit 0
+[ "$DEVICENAME" = "$PRODUCT" ] && exit 0
+case "$PRODUCT" in
+  2cb7*) ;;
+  *) exit 0 ;;
+esac
+logger -t fm350gl "USB add: PRODUCT=$PRODUCT DEVICENAME=$DEVICENAME"
+if [ -d /sys/bus/usb-serial/drivers/option ]; then
+  for id in $PRODUCT; do
+    vid="${id%%/*}"
+    pid="${id#*/}"; pid="${pid%%/*}"
+    if [ -n "$vid" ] && [ -n "$pid" ]; then
+      if ! grep -q "${vid}:${pid}" /sys/bus/usb-serial/drivers/option/id_table 2>/dev/null; then
+        echo "${vid} ${pid}" > /sys/bus/usb-serial/drivers/option/new_id 2>/dev/null && \
+          logger -t fm350gl "option: registered ${vid}:${pid}"
+      fi
+    fi
+  done
+fi
+for m in qmi_wwan_f usb_wwan cdc_ether rndis_host; do
+  modprobe "$m" 2>/dev/null
+done
+if command -v usb_modeswitch >/dev/null 2>&1; then
+  if [ -r "/sys/$DEVPATH/bInterfaceClass" ] && \
+     grep -qx "08" "/sys/$DEVPATH/bInterfaceClass" 2>/dev/null; then
+    logger -t fm350gl "检测到存储模式，执行 usb_modeswitch"
+    usb_modeswitch -v 2cb7 -p "${pid:-01a4}" -M 5553424312345678000000000000061b000000020000000000000000000000 2>/dev/null || true
+  fi
+fi
+exit 0
