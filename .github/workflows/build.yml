@@ -23,6 +23,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: 检出本仓库(构建套件)
         uses: actions/checkout@v4
@@ -55,7 +57,7 @@ jobs:
           chmod +x build.sh
           ./build.sh "$OPENWRT_DIR"
 
-      - name: 上传固件产物
+      - name: 上传固件产物(Artifact, 7天临时)
         uses: actions/upload-artifact@v4
         if: success()
         with:
@@ -63,4 +65,16 @@ jobs:
           path: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-sysupgrade.img.gz
           if-no-files-found: error
           retention-days: 7
-          
+
+      - name: 发布到 Release(永久保存)
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: h29k-fm350gl-${{ github.run_number }}
+          name: H29K FM350-GL 固件 #${{ github.run_number }}
+          files: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-sysupgrade.img.gz
+          body: |
+            HinLink OPC-H29K (RK3528) + Fibocom FM350-GL 固件
+            基于 lean-wrt / OpenWrt 24.10，含 fibocom-dial / qmi_wwan_f 驱动与拨号器
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
