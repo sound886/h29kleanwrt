@@ -49,6 +49,16 @@ jobs:
         run: |
           git clone --depth 1 --branch master https://github.com/pw-q/lean-wrt.git "$OPENWRT_DIR"
 
+      - name: 修补 rstrip.sh(避免 sstrip 在 ARM 共享库上失败)
+        run: |
+          RF="$OPENWRT_DIR/scripts/rstrip.sh"
+          if [ -f "$RF" ]; then
+            sed -i 's/\$STRIP_LIB/$STRIP_KMOD/g' "$RF"
+            echo "[*] rstrip.sh 已修补：剥离改用交叉 strip，绕开 sstrip 报错"
+          else
+            echo "[!] 未找到 rstrip.sh，跳过修补"
+          fi
+
       - name: 运行构建脚本(内含拷贝 feeds/config/files 与编译)
         working-directory: ${{ github.workspace }}
         env:
