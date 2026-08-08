@@ -10,6 +10,6 @@ config wifi-iface 'default_radio0'
 	option device 'radio0'
 	option network 'lan'
 	option mode 'ap'
-	option ssid 'H29K'          ← 名字自己定
+	option ssid 'H29K'          
 	option encryption 'psk2'
-	option key '1234567890'        ← 密码自己定,至少 8 位
+	option key '1234567890'       
