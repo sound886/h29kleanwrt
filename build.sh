@@ -27,13 +27,17 @@ fi
 
 echo "[*] 更新 feeds (update -a) ..."
 ./scripts/feeds update -a
-# 临时移除 kenzo feed 中有问题的 webd 包
-rm -rf "$LEAN_RT/feeds/kenzo/webd"
 
 echo "[*] 安装 feeds (install -a) ..."
 ./scripts/feeds install -a
-./scripts/feeds install luci-app-modem 2>/dev/null || \
-  echo "[!] luci-app-modem 未从独立 feed 安装（可能已在 coolsnowwolf/luci 中，稍后 defconfig 校验）"
+
+# ===== 修复 kenzo feed 的 webd Makefile 损坏问题 =====
+# kenzok8/small-package 当前 webd/Makefile 有 syntax error，
+# sanity check 失败导致整个构建退出。
+# 注意：必须 install 之后再删——install 基于 update 的 manifest，
+# 提前删了没用，照样重建符号链接。
+rm -rf "$LEAN_RT/feeds/kenzo/webd"
+rm -rf "$LEAN_RT/package/feeds/kenzo/webd"
 
 echo "[*] 生成 .config（目标 hinlink_opc-h29k + FM350-GL 选型）..."
 : > .config
