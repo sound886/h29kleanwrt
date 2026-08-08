@@ -76,7 +76,7 @@ echo "[*] 第二阶段：编译固件 make -j$(nproc) V=s ..."
 make -j"$(nproc)" V=s
 
 
-IMG="bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-sysupgrade.img.gz"
+IMG="bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-squashfs-sysupgrade.img.gz"
 echo "[*] 编译完成。产物："
 ls -lh "$IMG" 2>/dev/null || { echo "[!] 未找到 $IMG，请检查上面的编译日志"; exit 1; }
 echo "[*] 刷机前请务必备份原厂 / 当前固件的 ART、MAC、btmac 等分区！"
