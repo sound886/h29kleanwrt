@@ -75,7 +75,7 @@ jobs:
         if: success()
         with:
           name: h29k-fm350gl-sysupgrade
-          path: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-sysupgrade.img.gz
+          path: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-squashfs-sysupgrade.img.gz
           if-no-files-found: error
           retention-days: 7
 
