@@ -27,6 +27,9 @@ fi
 
 echo "[*] 更新 feeds (update -a) ..."
 ./scripts/feeds update -a
+# 临时移除 kenzo feed 中有问题的 webd 包
+rm -rf "$LEAN_RT/feeds/kenzo/webd"
+
 echo "[*] 安装 feeds (install -a) ..."
 ./scripts/feeds install -a
 ./scripts/feeds install luci-app-modem 2>/dev/null || \
