@@ -70,15 +70,7 @@ jobs:
           chmod +x build.sh
           ./build.sh "$OPENWRT_DIR"
 
-      - name: 上传固件产物(Artifact, 7天临时)
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: h29k-fm350gl-sysupgrade
-          path: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-squashfs-sysupgrade.img.gz
-          if-no-files-found: error
-          retention-days: 7
-
+      
       - name: 发布到 Release(永久保存)
         if: success()
         uses: softprops/action-gh-release@v2
