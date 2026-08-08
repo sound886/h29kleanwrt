@@ -85,7 +85,7 @@ jobs:
         with:
           tag_name: h29k-fm350gl-${{ github.run_number }}
           name: H29K FM350-GL 固件 #${{ github.run_number }}
-          files: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-sysupgrade.img.gz
+          files: ${{ env.OPENWRT_DIR }}/bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-squashfs-sysupgrade.img.gz
           body: |
             HinLink OPC-H29K (RK3528) + Fibocom FM350-GL 固件
             基于 lean-wrt / OpenWrt 24.10，含 fibocom-dial / qmi_wwan_f 驱动与拨号器
