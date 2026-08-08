@@ -55,8 +55,26 @@ done
 echo "[*] 预下载源码包 (make download) ..."
 make -j"$(nproc)" download || make download
 
-echo "[*] 开始编译 make -j$(nproc) V=s ..."
+# ===== 修复 uboot-rockchip binman 缺 pyelftools =====
+# U-Boot 2025.01 用 binman 打包，需 host python3 有 elftools 模块
+# 先构建 host 工具链（含 host python3），装好 pyelftools，再编译剩余部分
+echo "[*] 第一阶段：构建 host 工具链 (make tools/install) ..."
+make tools/install -j"$(nproc)" || make tools/install
+
+echo "[*] 安装 pyelftools 到 host python3（供 binman 解析 ATF ELF 文件）..."
+"$LEAN_RT/staging_dir/host/bin/python3" -m pip install --break-system-packages pyelftools 2>/dev/null || \
+  "$LEAN_RT/staging_dir/host/bin/python3" -m pip install pyelftools
+
+# 验证安装
+if "$LEAN_RT/staging_dir/host/bin/python3" -c 'import elftools' 2>/dev/null; then
+  echo "    [OK] pyelftools 已就绪"
+else
+  echo "    [!!] pyelftools 安装失败，请检查 pip / 网络"
+fi
+
+echo "[*] 第二阶段：编译固件 make -j$(nproc) V=s ..."
 make -j"$(nproc)" V=s
+
 
 IMG="bin/targets/rockchip/armv8/openwrt-rockchip-armv8-hinlink_opc-h29k-sysupgrade.img.gz"
 echo "[*] 编译完成。产物："
