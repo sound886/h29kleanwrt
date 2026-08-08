@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+boot() {
+	start
+}
+
+start() {
+	sleep 15
+	/usr/bin/fibocom-dial
+	sleep 5
+	/usr/bin/quectel-cm &
+}
+
