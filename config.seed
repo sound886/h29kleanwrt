@@ -62,3 +62,4 @@ CONFIG_PACKAGE_luci-app-passwall2=y
 # CONFIG_PACKAGE_elfutils is not set
 
 CONFIG_PACKAGE_mobile-broadband-provider-info=y
+# CONFIG_PACKAGE_luci-app-passwall2_INCLUDE_Haproxy is not set
