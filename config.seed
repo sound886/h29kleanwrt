@@ -55,7 +55,7 @@ CONFIG_PACKAGE_curl=y
 CONFIG_PACKAGE_llmnr=y
 CONFIG_PACKAGE_iperf3=y
 
-# CONFIG_PACKAGE_luci-app-homeproxy=y
+# CONFIG_PACKAGE_luci-app-homeproxy is not set
 CONFIG_PACKAGE_luci-app-passwall2=y
 
 # elfutils 在 musl 工具链下打包失败，跳过整个包
