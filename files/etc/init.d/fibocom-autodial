@@ -1,15 +1,45 @@
 #!/bin/sh /etc/rc.common
+# FM350-GL 自动拨号启动脚本
+# 使用 QWRT luci-app-modem 的 fibocom 模组管理
 
-START=99
+START=95
 
 boot() {
-	start
+    start
 }
 
 start() {
-	sleep 15
-	/usr/bin/fibocom-dial
-	sleep 5
-	/usr/bin/quectel-cm &
+    logger -t autodial "等待模组就绪..."
+    
+    # 等待 FM350-GL 出现 (最多 60 秒)
+    for i in $(seq 1 12); do
+        lsusb | grep -qi "0e8d\|7127" && break
+        sleep 5
+    done
+    
+    # 等待 ttyUSB 设备出现
+    for i in $(seq 1 10); do
+        [ -c /dev/ttyUSB3 ] && break
+        sleep 3
+    done
+    
+    # 如果 QWRT 模组管理可用，优先使用
+    if [ -x /etc/init.d/modem ]; then
+        logger -t autodial "启动 QWRT 模组管理..."
+        /etc/init.d/modem enable 2>/dev/null
+        /etc/init.d/modem start 2>/dev/null
+    fi
+    
+    # 备用：直接使用 fibocom-dial
+    if [ -x /usr/bin/fibocom-dial ]; then
+        logger -t autodial "启动 fibocom-dial 备用拨号..."
+        /usr/bin/fibocom-dial &
+    fi
+    
+    logger -t autodial "自动拨号初始化完成"
 }
 
+stop() {
+    [ -x /etc/init.d/modem ] && /etc/init.d/modem stop 2>/dev/null
+    killall fibocom-dial quectel-cm 2>/dev/null
+}
